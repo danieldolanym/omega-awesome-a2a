@@ -1,0 +1,27 @@
+### SPHINX
+
+[[Paper]](https://arxiv.org/abs/2311.07575) [[Code]](https://github.com/Alpha-VLLM/LLaMA2-Accessory)
+
+A versatile multi-modal LLM that introduces a novel three-fold mixing strategy: joint mixing of model weights between real-world and synthetic data, multi-task instruction tuning, and comprehensive visual embeddings. Uniquely unfreezes LLM during pre-training and handles 12+ vision tasks including object detection, pose estimation, and region-level captioning.
+
+**Why it matters**: First MLLM to successfully combine weight mixing, task-specific instruction design, and multi-source visual embeddings in a single architecture, achieving SOTA performance across diverse visual tasks while maintaining model efficiency.
+
+```python
+# Example usage
+from sphinx import SphinxProcessor
+from PIL import Image
+
+processor = SphinxProcessor.from_pretrained("alpha-vllm/sphinx")
+image = Image.open("example.jpg")
+
+# Multi-task capability demonstration
+tasks = {
+    "detection": "Detect all objects in this image.",
+    "pose": "Detect the keypoints of the person.",
+    "caption": "Describe this region: [0.1, 0.2, 0.8, 0.9]"
+}
+
+for task, prompt in tasks.items():
+    inputs = processor(images=image, text=prompt, return_tensors="pt")
+    outputs = model.generate(**inputs)
+    print(f"{task}: {processor.decode(outputs[0])}")
