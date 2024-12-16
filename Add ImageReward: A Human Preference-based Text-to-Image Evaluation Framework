@@ -1,0 +1,36 @@
+# ImageReward: Human Preference-Driven Text-to-Image Evaluation
+
+## Overview
+ImageReward stands out as the first general-purpose text-to-image human preference reward model, introducing a systematic approach to evaluating and improving text-to-image generation through expert human feedback.
+
+## Key Features
+- Large-scale expert annotation dataset (137k comparisons)
+- Reward model trained on human preferences
+- ReFL (Reward Feedback Learning) algorithm for diffusion model optimization
+- Outperforms existing scoring models in human evaluation
+
+## Implementation
+
+### Basic Usage
+```python
+from ImageReward import ImageReward
+import torch
+
+def evaluate_image_generation(prompt, image_path):
+    # Initialize the reward model
+    model = ImageReward.load("THUDM/ImageReward-v1.0")
+    
+    # Calculate preference score
+    score = model.score(prompt, image_path)
+    return score
+
+# Example usage with ReFL fine-tuning
+def refl_training_loop(diffusion_model, reward_model, dataset):
+    for batch in dataset:
+        # Generate images
+        images = diffusion_model(batch['prompts'])
+        model.batch_score(batch['prompts'], images)
+        
+        # Update diffusion model using reward feedback
+        loss = calculate_refl_loss(rewards, images)
+        loss.backward()
